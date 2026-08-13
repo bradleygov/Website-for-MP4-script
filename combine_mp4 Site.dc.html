@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#050705; }
+  * { box-sizing:border-box; }
+  a { color:#3dff9a; text-decoration:none; }
+  a:hover { color:#eaffef; text-decoration:underline; }
+  ::selection { background:#3dff9a; color:#050705; }
+  @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+  @keyframes marq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+</style>
+</helmet>
+<div style="min-height:100vh;background:#050705;color:#b9d6c2;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:15px;line-height:1.65;position:relative;overflow-x:hidden">
+
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(to bottom,rgba(61,255,154,0.045) 0px,rgba(61,255,154,0.045) 1px,transparent 1px,transparent 3px);mix-blend-mode:screen"></div>
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:49;background:radial-gradient(ellipse at 50% 40%,transparent 45%,rgba(0,0,0,0.65) 100%)"></div>
+
+  <header style="position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 28px;background:rgba(5,7,5,0.92);backdrop-filter:blur(6px);border-bottom:1px solid #16301f">
+    <div style="display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-0.02em;color:#eaffef">
+      <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:#3dff9a;color:#050705;font-weight:800;font-size:13px">▸</span>
+      combine_mp4.py
+    </div>
+    <nav style="display:flex;align-items:center;gap:4px">
+      <button onClick="{{ goHome }}" style="{{ navHomeStyle }}">README</button>
+      <button onClick="{{ goRef }}" style="{{ navRefStyle }}">REFERENCE</button>
+      <a href="{{ repoUrl }}" target="_blank" rel="noreferrer" style="padding:7px 14px;border:1px solid #3dff9a;color:#3dff9a;font-size:13px;font-weight:600;letter-spacing:0.04em" style-hover="background:#3dff9a;color:#050705;text-decoration:none">GITHUB ↗</a>
+    </nav>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <section style="padding:96px 28px 72px;max-width:1080px;margin:0 auto">
+      <div style="display:inline-block;padding:4px 10px;border:1px solid #1f4030;color:#3dff9a;font-size:12px;letter-spacing:0.14em;margin-bottom:28px">v1.0 · PYTHON 3 · FFMPEG</div>
+      <h1 style="margin:0;font-size:clamp(44px,7.5vw,92px);line-height:0.95;font-weight:800;letter-spacing:-0.045em;color:#eaffef;text-wrap:balance">
+        Glue your MP4s<br>together and<br><span style="color:#3dff9a;text-shadow:0 0 28px rgba(61,255,154,0.45)">stop suffering.</span><span style="display:inline-block;width:0.55em;height:0.9em;background:#3dff9a;margin-left:8px;vertical-align:-0.06em;animation:blink 1.1s steps(1) infinite"></span>
+      </h1>
+      <p style="max-width:640px;margin:28px 0 0;font-size:17px;color:#8fb59c;text-wrap:pretty">
+        One script. It tries the fast lossless path first, and if your clips are a mismatched mess of codecs, resolutions and frame rates, it quietly re-encodes them instead of yelling at you. No timeline. No export dialog. No 40-minute render for a straight cut.
+      </p>
+
+      <div style="margin-top:40px;border:1px solid #1f4030;background:#0a0f0b;max-width:760px">
+        <div style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid #16301f;background:#0d140e">
+          <span style="width:10px;height:10px;border-radius:50%;background:#2a3b2f"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#2a3b2f"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#3dff9a"></span>
+          <span style="margin-left:8px;font-size:12px;color:#5e7a68;letter-spacing:0.08em">bash — 80×24</span>
+        </div>
+        <div style="padding:20px 18px;display:flex;flex-direction:column;gap:8px;font-size:15px">
+          <div style="display:flex;gap:10px"><span style="color:#3dff9a">$</span><span style="color:#eaffef">python combine_mp4.py ./clips -o output.mp4</span></div>
+          <div style="color:#5e7a68">Combining 4 files into output.mp4:</div>
+          <div style="color:#5e7a68">&nbsp;&nbsp;&nbsp;&nbsp;1. ./clips/clip1.mp4</div>
+          <div style="color:#5e7a68">&nbsp;&nbsp;&nbsp;&nbsp;2. ./clips/clip2.mp4</div>
+          <div style="color:#5e7a68">&nbsp;&nbsp;&nbsp;&nbsp;3. ./clips/clip9.mp4</div>
+          <div style="color:#5e7a68">&nbsp;&nbsp;&nbsp;&nbsp;4. ./clips/clip10.mp4&nbsp;&nbsp;<span style="color:#2f5a41">← yes, in that order</span></div>
+          <div style="color:#3dff9a">Done: output.mp4 (218.4 MB)</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:28px">
+        <button onClick="{{ copyInstall }}" style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:#3dff9a;color:#050705;border:none;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer" style-hover="background:#eaffef">
+          <span>curl -O combine_mp4.py</span>
+          <span style="font-size:12px;opacity:0.7;letter-spacing:0.08em">{{ copyLabel }}</span>
+        </button>
+        <a href="{{ repoUrl }}" target="_blank" rel="noreferrer" style="padding:14px 20px;border:1px solid #1f4030;color:#b9d6c2;font-size:15px" style-hover="border-color:#3dff9a;color:#3dff9a;text-decoration:none">Read the source ↗</a>
+      </div>
+    </section>
+
+    <div style="overflow:hidden;border-top:1px solid #16301f;border-bottom:1px solid #16301f;background:#080c08;padding:10px 0">
+      <div style="display:flex;width:max-content;animation:marq 26s linear infinite;font-size:12px;letter-spacing:0.22em;color:#2f5a41">
+        <span style="padding-right:28px">LOSSLESS STREAM COPY</span><span style="padding-right:28px">·</span><span style="padding-right:28px">AUTO RE-ENCODE FALLBACK</span><span style="padding-right:28px">·</span><span style="padding-right:28px">NATURAL SORT</span><span style="padding-right:28px">·</span><span style="padding-right:28px">GLOBS &amp; FOLDERS</span><span style="padding-right:28px">·</span><span style="padding-right:28px">H.264 / AAC</span><span style="padding-right:28px">·</span><span style="padding-right:28px">+FASTSTART</span><span style="padding-right:28px">·</span>
+        <span style="padding-right:28px">LOSSLESS STREAM COPY</span><span style="padding-right:28px">·</span><span style="padding-right:28px">AUTO RE-ENCODE FALLBACK</span><span style="padding-right:28px">·</span><span style="padding-right:28px">NATURAL SORT</span><span style="padding-right:28px">·</span><span style="padding-right:28px">GLOBS &amp; FOLDERS</span><span style="padding-right:28px">·</span><span style="padding-right:28px">H.264 / AAC</span><span style="padding-right:28px">·</span><span style="padding-right:28px">+FASTSTART</span><span style="padding-right:28px">·</span>
+      </div>
+    </div>
+
+    <section style="max-width:1080px;margin:0 auto;padding:72px 28px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:32px">
+        <span style="color:#3dff9a;font-size:13px;letter-spacing:0.14em">01</span>
+        <h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.03em;color:#eaffef">Three ways people actually use it</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:#16301f;border:1px solid #16301f">
+        <div style="background:#0a0f0b;padding:26px 22px">
+          <div style="color:#3dff9a;font-size:12px;letter-spacing:0.12em;margin-bottom:14px">A WHOLE FOLDER</div>
+          <pre style="margin:0 0 14px;font-family:inherit;font-size:13.5px;color:#eaffef;white-space:pre-wrap;word-break:break-word">python combine_mp4.py ./clips \
+  -o output.mp4</pre>
+          <p style="margin:0;font-size:14px;color:#8fb59c">Every .mp4 inside, natural-sorted, so clip2 lands before clip10 like a civilised person expects.</p>
+        </div>
+        <div style="background:#0a0f0b;padding:26px 22px">
+          <div style="color:#3dff9a;font-size:12px;letter-spacing:0.12em;margin-bottom:14px">EXACTLY THESE, IN ORDER</div>
+          <pre style="margin:0 0 14px;font-family:inherit;font-size:13.5px;color:#eaffef;white-space:pre-wrap;word-break:break-word">python combine_mp4.py intro.mp4 \
+  body.mp4 outro.mp4 -o final.mp4</pre>
+          <p style="margin:0;font-size:14px;color:#8fb59c">Name the files and they go in the order you named them. Add <span style="color:#3dff9a">--no-sort</span> if you want that guaranteed.</p>
+        </div>
+        <div style="background:#0a0f0b;padding:26px 22px">
+          <div style="color:#3dff9a;font-size:12px;letter-spacing:0.12em;margin-bottom:14px">A GLOB, BECAUSE OF COURSE</div>
+          <pre style="margin:0 0 14px;font-family:inherit;font-size:13.5px;color:#eaffef;white-space:pre-wrap;word-break:break-word">python combine_mp4.py \
+  "footage/*.mp4" -o reel.mp4</pre>
+          <p style="margin:0;font-size:14px;color:#8fb59c">Quote the pattern so your shell hands it over intact. Duplicates get dropped, order preserved.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="max-width:1080px;margin:0 auto;padding:0 28px 88px">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:32px">
+        <span style="color:#3dff9a;font-size:13px;letter-spacing:0.14em">02</span>
+        <h2 style="margin:0;font-size:26px;font-weight:800;letter-spacing:-0.03em;color:#eaffef">You need ffmpeg. That's the whole shopping list.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <div style="border:1px solid #1f4030;background:#0a0f0b;padding:20px">
+          <div style="color:#5e7a68;font-size:12px;letter-spacing:0.12em;margin-bottom:10px">MACOS</div>
+          <div style="color:#eaffef;font-size:14px"><span style="color:#3dff9a">$ </span>brew install ffmpeg</div>
+        </div>
+        <div style="border:1px solid #1f4030;background:#0a0f0b;padding:20px">
+          <div style="color:#5e7a68;font-size:12px;letter-spacing:0.12em;margin-bottom:10px">UBUNTU</div>
+          <div style="color:#eaffef;font-size:14px"><span style="color:#3dff9a">$ </span>sudo apt install ffmpeg</div>
+        </div>
+        <div style="border:1px solid #1f4030;background:#0a0f0b;padding:20px">
+          <div style="color:#5e7a68;font-size:12px;letter-spacing:0.12em;margin-bottom:10px">WINDOWS</div>
+          <div style="color:#eaffef;font-size:14px"><span style="color:#3dff9a">&gt; </span>winget install Gyan.FFmpeg</div>
+        </div>
+      </div>
+      <p style="margin:18px 0 0;font-size:14px;color:#5e7a68">If it isn't on your PATH the script says so in plain English and exits, rather than dumping a stack trace on you.</p>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isRef }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:1080px;margin:0 auto;padding:72px 28px 96px">
+    <div style="color:#3dff9a;font-size:12px;letter-spacing:0.16em;margin-bottom:14px">REFERENCE</div>
+    <h1 style="margin:0 0 12px;font-size:clamp(34px,5vw,56px);line-height:1;font-weight:800;letter-spacing:-0.04em;color:#eaffef">Every flag, no mystery</h1>
+    <p style="max-width:620px;margin:0 0 44px;color:#8fb59c;font-size:16px;text-wrap:pretty">There are four of them. You will probably only ever use two.</p>
+
+    <pre style="margin:0 0 48px;padding:20px;border:1px solid #1f4030;background:#0a0f0b;font-family:inherit;font-size:14px;color:#eaffef;overflow-x:auto">usage: combine_mp4.py [-h] [-o OUTPUT] [--no-sort] [--reencode] inputs [inputs ...]</pre>
+
+    <div style="border:1px solid #16301f">
+      <div style="display:grid;grid-template-columns:minmax(180px,1fr) 2.4fr;gap:1px;background:#16301f">
+        <div style="background:#0d140e;padding:12px 18px;color:#5e7a68;font-size:12px;letter-spacing:0.12em">FLAG</div>
+        <div style="background:#0d140e;padding:12px 18px;color:#5e7a68;font-size:12px;letter-spacing:0.12em">WHAT IT DOES</div>
+
+        <div style="background:#0a0f0b;padding:18px;color:#3dff9a;font-size:14px">inputs</div>
+        <div style="background:#0a0f0b;padding:18px;font-size:14px;color:#b9d6c2">One or more MP4 files, glob patterns, or a directory. A directory pulls in every <span style="color:#eaffef">.mp4</span> and <span style="color:#eaffef">.MP4</span> inside it. Required — at least one.</div>
+
+        <div style="background:#0a0f0b;padding:18px;color:#3dff9a;font-size:14px">-o, --output</div>
+        <div style="background:#0a0f0b;padding:18px;font-size:14px;color:#b9d6c2">Where the result lands. Defaults to <span style="color:#eaffef">combined.mp4</span> in the current directory. Missing folders get created for you.</div>
+
+        <div style="background:#0a0f0b;padding:18px;color:#3dff9a;font-size:14px">--no-sort</div>
+        <div style="background:#0a0f0b;padding:18px;font-size:14px;color:#b9d6c2">Keeps your exact argument order instead of natural-sorting by filename. Use it when the filenames lie about the order.</div>
+
+        <div style="background:#0a0f0b;padding:18px;color:#3dff9a;font-size:14px">--reencode</div>
+        <div style="background:#0a0f0b;padding:18px;font-size:14px;color:#b9d6c2">Skips the fast stream-copy attempt entirely and re-encodes straight away. Worth it when you already know the clips don't match and don't want to watch the first attempt fail.</div>
+
+        <div style="background:#0a0f0b;padding:18px;color:#3dff9a;font-size:14px">-h, --help</div>
+        <div style="background:#0a0f0b;padding:18px;font-size:14px;color:#b9d6c2">Prints usage plus the examples from the docstring.</div>
+      </div>
+    </div>
+
+    <h2 style="margin:64px 0 18px;font-size:24px;font-weight:800;letter-spacing:-0.03em;color:#eaffef">What happens under the hood</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+      <div style="border:1px solid #1f4030;background:#0a0f0b;padding:24px">
+        <div style="color:#3dff9a;font-size:12px;letter-spacing:0.12em;margin-bottom:12px">PASS 1 · STREAM COPY</div>
+        <p style="margin:0 0 14px;font-size:14px;color:#8fb59c">The concat demuxer with <span style="color:#eaffef">-c copy</span>. Nothing is decoded, nothing is degraded, and it finishes about as fast as your disk can move bytes.</p>
+        <p style="margin:0;font-size:14px;color:#5e7a68">Only works when every clip shares codec, resolution and frame rate.</p>
+      </div>
+      <div style="border:1px solid #1f4030;background:#0a0f0b;padding:24px">
+        <div style="color:#3dff9a;font-size:12px;letter-spacing:0.12em;margin-bottom:12px">PASS 2 · RE-ENCODE</div>
+        <p style="margin:0 0 14px;font-size:14px;color:#8fb59c">If pass 1 fails, the concat filter takes over and normalises everything to H.264 <span style="color:#eaffef">crf 18</span> + AAC 192k, with <span style="color:#eaffef">+faststart</span> so it streams properly.</p>
+        <p style="margin:0;font-size:14px;color:#5e7a68">Slower, but it basically always works.</p>
+      </div>
+    </div>
+
+    <h2 style="margin:64px 0 18px;font-size:24px;font-weight:800;letter-spacing:-0.03em;color:#eaffef">Edge cases it already handles</h2>
+    <div style="display:flex;flex-direction:column;gap:1px;background:#16301f;border:1px solid #16301f">
+      <div style="background:#0a0f0b;padding:16px 18px;font-size:14px;color:#b9d6c2"><span style="color:#3dff9a">→ </span>Passing one file just copies it to the output and exits cleanly.</div>
+      <div style="background:#0a0f0b;padding:16px 18px;font-size:14px;color:#b9d6c2"><span style="color:#3dff9a">→ </span>The same file listed twice is de-duplicated by absolute path.</div>
+      <div style="background:#0a0f0b;padding:16px 18px;font-size:14px;color:#b9d6c2"><span style="color:#3dff9a">→ </span>A pattern that matches nothing warns on stderr instead of dying silently.</div>
+      <div style="background:#0a0f0b;padding:16px 18px;font-size:14px;color:#b9d6c2"><span style="color:#3dff9a">→ </span>Filenames with apostrophes are escaped in the concat list.</div>
+      <div style="background:#0a0f0b;padding:16px 18px;font-size:14px;color:#b9d6c2"><span style="color:#3dff9a">→ </span>Exit code is 1 if both passes fail, so it behaves in a shell script.</div>
+    </div>
+  </main>
+  </sc-if>
+
+  <footer style="border-top:1px solid #16301f;background:#080c08;padding:36px 28px">
+    <div style="max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;font-size:13px;color:#5e7a68">
+      <span>combine_mp4.py — a hundred-odd lines standing between you and a video editor.</span>
+      <a href="{{ repoUrl }}" target="_blank" rel="noreferrer">github ↗</a>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;repoUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://github.com/&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;reference&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  state = { page: null, copied: false };
+
+  get page() {
+    return this.state.page || this.props.startPage || "home";
+  }
+
+  navStyle(active) {
+    return "padding:7px 14px;border:1px solid " + (active ? "#3dff9a" : "transparent") +
+      ";background:" + (active ? "#0f1f16" : "transparent") +
+      ";color:" + (active ? "#3dff9a" : "#8fb59c") +
+      ";font-family:inherit;font-size:13px;font-weight:600;letter-spacing:0.04em;cursor:pointer";
+  }
+
+  copyInstall = () => {
+    const cmd = "curl -O https://raw.githubusercontent.com/example/combine-mp4/main/combine_mp4.py";
+    if (navigator.clipboard) navigator.clipboard.writeText(cmd).catch(() => {});
+    this.setState({ copied: true });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ copied: false }), 1600);
+  };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const p = this.page;
+    return {
+      isHome: p === "home",
+      isRef: p === "reference",
+      navHomeStyle: this.navStyle(p === "home"),
+      navRefStyle: this.navStyle(p === "reference"),
+      goHome: () => this.setState({ page: "home" }),
+      goRef: () => this.setState({ page: "reference" }),
+      copyInstall: this.copyInstall,
+      copyLabel: this.state.copied ? "COPIED" : "CLICK TO COPY",
+      repoUrl: this.props.repoUrl || "https://github.com/",
+    };
+  }
+}
+</script>
+</body>
+</html>
