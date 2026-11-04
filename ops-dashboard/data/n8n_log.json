@@ -1,0 +1,14 @@
+[
+ {"id":"ex-4821","ts":"2026-11-04T07:41:12Z","workflow":"Etchworks order intake","category":"etchworks","level":"success","message":"New order #1047 logged to Airtable (slate coaster ×4)","duration_ms":1840},
+ {"id":"ex-4820","ts":"2026-11-04T07:36:02Z","workflow":"Shorts render queue","category":"vids","level":"error","message":"ffmpeg exited 1: audio stream drift > 120 ms on clip 3","duration_ms":48210},
+ {"id":"ex-4819","ts":"2026-11-04T07:30:00Z","workflow":"Intune compliance sweep","category":"cloud","level":"warning","message":"6 devices non-compliant (BitLocker key not escrowed)","duration_ms":9320},
+ {"id":"ex-4818","ts":"2026-11-04T07:22:45Z","workflow":"Printer fleet monitor","category":"ops","level":"warning","message":"K1-01 spool below 200 g (PLA White)","duration_ms":610},
+ {"id":"ex-4817","ts":"2026-11-04T07:15:31Z","workflow":"MP4 combine job","category":"vids","level":"success","message":"Merged 12 clips → episode_0412.mp4 (1.8 GB)","duration_ms":96400},
+ {"id":"ex-4816","ts":"2026-11-04T07:00:00Z","workflow":"Graph app packaging","category":"cloud","level":"success","message":"Packaged 7-Zip 24.08 .intunewin and uploaded","duration_ms":22870},
+ {"id":"ex-4815","ts":"2026-11-04T06:48:19Z","workflow":"Etchworks invoice generator","category":"etchworks","level":"success","message":"Invoice INV-0391 sent to customer","duration_ms":3120},
+ {"id":"ex-4814","ts":"2026-11-04T06:30:00Z","workflow":"BNPL reminder","category":"finance","level":"success","message":"Reminder queued: Klarna payment due Nov 9","duration_ms":420},
+ {"id":"ex-4813","ts":"2026-11-04T06:12:07Z","workflow":"Etchworks material usage","category":"etchworks","level":"success","message":"Logged 0.6 sq ft slate, 2 leather patches","duration_ms":980},
+ {"id":"ex-4812","ts":"2026-11-04T05:55:40Z","workflow":"Shorts render queue","category":"vids","level":"error","message":"Upload to YouTube failed: quota exceeded","duration_ms":5210},
+ {"id":"ex-4811","ts":"2026-11-04T05:30:00Z","workflow":"Intune compliance sweep","category":"cloud","level":"success","message":"Sweep complete: 212 devices evaluated","duration_ms":11040},
+ {"id":"ex-4810","ts":"2026-11-04T05:05:12Z","workflow":"Brookfield doc tracker","category":"ops","level":"success","message":"Payoff letter request emailed to lender","duration_ms":760}
+]

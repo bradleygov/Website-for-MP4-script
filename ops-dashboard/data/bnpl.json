@@ -1,0 +1,7 @@
+[
+ {"plan":"klarna-p1s","provider":"Klarna","item":"Bambu Lab P1S printer","category":"ops","total":699,"paid":524.25,"installment":174.75,"payments_left":1,"next_due":"2026-11-09"},
+ {"plan":"afterpay-vanity","provider":"Afterpay","item":"Bathroom vanity and faucet","category":"ops","total":840,"paid":420,"installment":210,"payments_left":2,"next_due":"2026-11-12"},
+ {"plan":"affirm-xtool","provider":"Affirm","item":"xTool F2 laser bundle","category":"etchworks","total":1899,"paid":633,"installment":158.25,"payments_left":8,"next_due":"2026-11-15"},
+ {"plan":"paypal-capture","provider":"PayPal Pay in 4","item":"Capture card and mic","category":"vids","total":320,"paid":80,"installment":80,"payments_left":3,"next_due":"2026-11-18"},
+ {"plan":"affirm-laptop","provider":"Affirm","item":"Lab laptop","category":"cloud","total":1440,"paid":1080,"installment":120,"payments_left":3,"next_due":"2026-11-28"}
+]

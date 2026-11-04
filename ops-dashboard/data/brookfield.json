@@ -1,0 +1,9 @@
+[
+ {"milestone":"Title search ordered","due":"2026-09-18","status":"done","owner":"Title company"},
+ {"milestone":"Survey and inspection","due":"2026-10-02","status":"done","owner":"Surveyor"},
+ {"milestone":"Quitclaim deed drafted","due":"2026-10-21","status":"done","owner":"Attorney"},
+ {"milestone":"Lender payoff letter","due":"2026-11-06","status":"active","owner":"Bank"},
+ {"milestone":"Deed signing and notarization","due":"2026-11-13","status":"upcoming","owner":"Attorney"},
+ {"milestone":"County recording","due":"2026-11-20","status":"upcoming","owner":"County recorder"},
+ {"milestone":"Insurance and utilities transfer","due":"2026-11-27","status":"upcoming","owner":"Bradley"}
+]

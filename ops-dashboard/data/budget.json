@@ -1,0 +1,9 @@
+[
+ {"bucket":"Bathroom renovation","category":"ops","allocated":1200,"spent":1385},
+ {"bucket":"Brookfield transfer and legal","category":"ops","allocated":600,"spent":450},
+ {"bucket":"Etchworks materials","category":"etchworks","allocated":450,"spent":312},
+ {"bucket":"Etchworks equipment payments","category":"etchworks","allocated":160,"spent":158.25},
+ {"bucket":"3D printing filament and parts","category":"ops","allocated":150,"spent":88},
+ {"bucket":"VidsAutomate tools and APIs","category":"vids","allocated":120,"spent":96},
+ {"bucket":"Cloud lab and certifications","category":"cloud","allocated":100,"spent":42}
+]

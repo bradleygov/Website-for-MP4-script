@@ -1,0 +1,609 @@
+<meta name="dash-one-writer">
+<style>
+  /* Layout: header + KPI strip, filter tabs, then a two-column grid (projects & operations | live feed & finance). */
+  .cc {
+    --cat-cloud: #2b7de9;
+    --cat-etchworks: #e8692a;
+    --cat-vids: #a557f2;
+    --cat-ops: #1f9e74;
+    --cat-finance: #c9971c;
+  }
+  .cc { display: flex; flex-direction: column; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .cc [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+
+  /* Header */
+  .cc-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--cds-gap-md); }
+  .cc-eyebrow { margin: 0; display: flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; text-transform: uppercase; }
+  .cc-live { width: .5rem; height: .5rem; border-radius: 50%; background: var(--color-ok); box-shadow: 0 0 0 0 var(--color-ok); }
+  @media (prefers-reduced-motion: no-preference) { .cc-live { animation: cc-pulse 2s var(--cds-ease-out) infinite; } }
+  @keyframes cc-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-ok) 60%, transparent); } 100% { box-shadow: 0 0 0 .5rem transparent; } }
+  .cc-title { margin: var(--cds-gap-xs) 0 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.25); line-height: 1.15; text-wrap: balance; }
+  .cc-take { margin: var(--cds-gap-xs) 0 0; max-width: 62ch; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); line-height: 1.5; }
+  .cc-take b { color: var(--color-fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cc-clock { font-variant-numeric: tabular-nums; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+
+  /* KPI strip */
+  .cc-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--cds-gap-sm); }
+  .cc-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+  .cc-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cc-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .cc-kpi-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .cc-kpi--bad .cc-kpi-value { color: var(--color-bad); }
+
+  /* Tabs */
+  .cc-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); padding-bottom: var(--cds-pad-sm); }
+  .cc-tab { --c: var(--color-fg-muted); display: inline-flex; align-items: center; gap: var(--cds-gap-xs); font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: transparent; border: 1px solid var(--color-border-line); border-radius: 999px; padding: .35rem .8rem; cursor: pointer; transition: background var(--cds-dur-slow), border-color var(--cds-dur-slow); }
+  .cc-tab:hover { border-color: var(--c); }
+  .cc-tab:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+  .cc-tab[aria-selected=true] { background: color-mix(in srgb, var(--c) 18%, transparent); border-color: var(--c); font-weight: 600; }
+  .cc-sw { width: .6rem; height: .6rem; border-radius: 2px; background: var(--c); flex: none; }
+  .cat-cloud { --c: var(--cat-cloud); }
+  .cat-etchworks { --c: var(--cat-etchworks); }
+  .cat-vids { --c: var(--cat-vids); }
+  .cat-ops { --c: var(--cat-ops); }
+  .cat-finance { --c: var(--cat-finance); }
+
+  /* Two-column grid */
+  .cc-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--cds-gap-lg); align-items: start; }
+  @media (max-width: 920px) { .cc-grid { grid-template-columns: minmax(0, 1fr); } }
+  .cc-col { display: flex; flex-direction: column; gap: var(--cds-gap-md); min-width: 0; }
+  .cc-sec { display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+  .cc-h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .cc-sec-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cc-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--cds-gap-md); }
+
+  /* Category card */
+  .cc-card { --c: var(--color-fg-muted); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; min-width: 0; display: flex; flex-direction: column; }
+  .cc-card-head { display: flex; align-items: center; justify-content: space-between; gap: var(--cds-gap-sm); padding: var(--cds-pad-sm) var(--cds-pad-lg); background: color-mix(in srgb, var(--c) 13%, var(--color-panel)); border-bottom: 1px solid color-mix(in srgb, var(--c) 35%, var(--color-border-line)); }
+  .cc-card-title { display: flex; align-items: center; gap: var(--cds-gap-sm); margin: 0; font-size: var(--cds-font-size-body); font-weight: 600; }
+  .cc-card-tag { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 400; }
+  .cc-card-stat { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .cc-card-stat b { color: var(--color-fg); font-weight: 600; }
+  .cc-card-body { padding: var(--cds-pad-md) var(--cds-pad-lg) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-height: 6rem; }
+  .cc-sub { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+
+  .cc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-height: 4rem; }
+  .cc-fail { display: flex; align-items: center; justify-content: center; gap: .4rem; min-height: 4rem; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .cc-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+
+  /* Project row */
+  .pj { display: flex; flex-direction: column; gap: .35rem; padding-bottom: var(--cds-pad-sm); border-bottom: 1px dashed var(--color-border-line); }
+  .pj:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pj-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-sm); }
+  .pj-name { font-size: var(--cds-font-size-body); font-weight: 500; min-width: 0; }
+  .pj-meta { display: flex; flex-wrap: wrap; gap: .25rem var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .pj-meta strong { color: var(--color-fg); font-weight: 600; }
+
+  .bar { position: relative; height: 6px; border-radius: 3px; background: color-mix(in srgb, var(--color-fg) 9%, transparent); overflow: hidden; }
+  .bar > i { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: var(--c); }
+  .bar--over > i { background: var(--color-bad); }
+
+  .pill { display: inline-flex; align-items: center; gap: .3rem; flex: none; font-size: var(--cds-font-size-caption); padding: .1rem .5rem; border-radius: 999px; white-space: nowrap; border: 1px solid currentColor; }
+  .pill::before { content: ""; width: .4rem; height: .4rem; border-radius: 50%; background: currentColor; }
+  .s-ok { color: var(--color-ok); }
+  .s-warn { color: var(--color-warn); }
+  .s-bad { color: var(--color-bad); }
+  .s-muted { color: var(--color-fg-muted); }
+  .s-info { color: var(--cat-cloud); }
+
+  /* Kanban */
+  .kb { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--cds-gap-sm); }
+  @media (max-width: 560px) { .kb { grid-template-columns: minmax(0, 1fr); } }
+  .kb-col { display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; background: color-mix(in srgb, var(--color-fg) 4%, transparent); border-radius: var(--cds-radius); padding: var(--cds-pad-sm); }
+  .kb-col-h { margin: 0; display: flex; justify-content: space-between; font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .05em; color: var(--color-fg-muted); }
+  .kb-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: calc(var(--cds-radius) * .75); padding: .45rem .55rem; display: flex; flex-direction: column; gap: .15rem; font-size: var(--cds-font-size-caption); }
+  .kb-card b { font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--color-fg); }
+  .kb-card span { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .kb-card--late { border-color: var(--color-bad); }
+  .kb-card--done b { text-decoration: line-through; text-decoration-color: var(--color-fg-muted); color: var(--color-fg-muted); }
+
+  /* Printers */
+  .pr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem var(--cds-gap-sm); padding-bottom: var(--cds-pad-sm); border-bottom: 1px dashed var(--color-border-line); }
+  .pr:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pr-name { font-weight: 600; font-size: var(--cds-font-size-body); }
+  .pr-model { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .pr-line { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .2rem var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .pr-spool { grid-column: 1 / -1; display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 4rem; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .pr-spool .bar--low > i { background: var(--color-warn); }
+
+  /* Timeline */
+  .tl { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 4rem; }
+  .tl-i { position: relative; display: grid; grid-template-columns: 1.25rem minmax(0, 1fr) auto; gap: var(--cds-gap-sm); padding-bottom: var(--cds-pad-sm); }
+  .tl-i::before { content: ""; position: absolute; left: calc(.625rem - 1px); top: 1rem; bottom: 0; width: 2px; background: var(--color-border-line); }
+  .tl-i:last-child::before { display: none; }
+  .tl-dot { width: .8rem; height: .8rem; margin: .2rem auto 0; border-radius: 50%; border: 2px solid var(--c); background: var(--color-panel); position: relative; z-index: 1; }
+  .tl-i--done .tl-dot { background: var(--c); }
+  .tl-i--active .tl-dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 30%, transparent); }
+  .tl-name { font-size: var(--cds-font-size-body); }
+  .tl-i--done .tl-name { color: var(--color-fg-muted); }
+  .tl-owner { display: block; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .tl-when { text-align: right; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tl-when strong { display: block; color: var(--color-fg); font-weight: 600; }
+
+  /* Feed */
+  .feed-stats { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .feed-stats b { color: var(--color-fg); font-weight: 600; }
+  .feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; max-height: 30rem; overflow: auto; min-height: 6rem; }
+  .fd { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); gap: var(--cds-gap-sm); padding: .5rem 0; border-bottom: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); }
+  .fd:last-child { border-bottom: 0; }
+  .fd-time { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; line-height: 1.3; }
+  .fd-time em { display: block; font-style: normal; font-size: .9em; }
+  .fd-main { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+  .fd-top { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+  .fd-wf { font-weight: 600; color: var(--color-fg); }
+  .fd-msg { color: var(--color-fg-muted); overflow-wrap: anywhere; }
+  .fd-lvl { width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; flex: none; }
+  .chip { --c: var(--color-fg-muted); display: inline-flex; align-items: center; gap: .25rem; padding: 0 .4rem; border-radius: 4px; background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--color-fg); font-size: .85em; white-space: nowrap; }
+  .feed-btn { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: transparent; border: 1px solid var(--color-border-line); border-radius: 999px; padding: .2rem .65rem; cursor: pointer; }
+  .feed-btn:hover { border-color: var(--color-fg-muted); }
+  .feed-btn:focus-visible { outline: 2px solid var(--cat-cloud); outline-offset: 2px; }
+
+  /* Finance */
+  .bn { display: flex; flex-direction: column; gap: .3rem; padding-bottom: var(--cds-pad-sm); border-bottom: 1px dashed var(--color-border-line); }
+  .bn:last-child { border-bottom: 0; padding-bottom: 0; }
+  .bn-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+  .bn-item { font-weight: 500; font-size: var(--cds-font-size-body); min-width: 0; }
+  .bn-due { font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-fg-muted); }
+  .bn-due--soon { color: var(--color-warn); font-weight: 600; }
+  .bn-meta { display: flex; flex-wrap: wrap; gap: .2rem var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .bg { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .25rem var(--cds-gap-sm); font-size: var(--cds-font-size-caption); }
+  .bg-name { display: flex; align-items: center; gap: .4rem; min-width: 0; color: var(--color-fg); }
+  .bg-val { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bg-val--over { color: var(--color-bad); font-weight: 600; }
+  .bg .bar { grid-column: 1 / -1; }
+  .cc-divider { height: 1px; background: var(--color-border-line); margin: var(--cds-gap-xs) 0; }
+</style>
+
+<div class="cc">
+  <header class="cc-head">
+    <div>
+      <p class="cc-eyebrow"><span class="cc-live" aria-hidden="true"></span>Live operations · <span class="cc-clock" data-draw="clock">—</span></p>
+      <h1 class="cc-title" id="top">Bradley's command center</h1>
+      <p class="cc-take">
+        <b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="active_projects" data-row="0">—</b> active projects averaging
+        <b data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="avg_progress" data-row="0">—</b> complete, with
+        <b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="flagged" data-row="0">—</b> at risk or blocked. Next installment:
+        <b data-draw="kpi" data-fmt="usd" data-source="kpis" data-field="next_due_amount" data-row="0">—</b> for
+        <b data-draw="kpi" data-fmt="text" data-source="kpis" data-field="next_due_item" data-row="0">—</b> on
+        <b data-draw="kpi" data-fmt="date" data-source="kpis" data-field="next_due_date" data-row="0">—</b>.
+      </p>
+    </div>
+  </header>
+
+  <section class="cc-kpis" aria-label="Headline figures">
+    <div class="cc-kpi">
+      <span class="cc-kpi-label">Active projects</span>
+      <span class="cc-kpi-value" data-draw="kpi" data-fmt="int" data-source="kpis" data-field="active_projects" data-row="0">—</span>
+      <span class="cc-kpi-sub">Across Cloud, Etchworks, VidsAutomate</span>
+    </div>
+    <div class="cc-kpi">
+      <span class="cc-kpi-label">Average progress</span>
+      <span class="cc-kpi-value" data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="avg_progress" data-row="0">—</span>
+      <span class="cc-kpi-sub">Excludes planned work</span>
+    </div>
+    <div class="cc-kpi cc-kpi--bad">
+      <span class="cc-kpi-label">Failed n8n runs</span>
+      <span class="cc-kpi-value" data-draw="kpi" data-fmt="int" data-source="kpis" data-field="failed_runs" data-row="0">—</span>
+      <span class="cc-kpi-sub">Success rate <b data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="success_rate" data-row="0">—</b> in feed</span>
+    </div>
+    <div class="cc-kpi">
+      <span class="cc-kpi-label">BNPL balance left</span>
+      <span class="cc-kpi-value" data-draw="kpi" data-fmt="usd0" data-source="kpis" data-field="bnpl_remaining" data-row="0">—</span>
+      <span class="cc-kpi-sub"><b data-draw="kpi" data-fmt="usd" data-source="kpis" data-field="bnpl_cycle" data-row="0">—</b> due this cycle</span>
+    </div>
+    <div class="cc-kpi">
+      <span class="cc-kpi-label">November budget used</span>
+      <span class="cc-kpi-value" data-draw="kpi" data-fmt="pct" data-source="kpis" data-field="budget_used" data-row="0">—</span>
+      <span class="cc-kpi-sub"><b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="over_budget" data-row="0">—</b> bucket over limit</span>
+    </div>
+  </section>
+
+  <nav class="cc-tabs" role="tablist" aria-label="Filter by area">
+    <button class="cc-tab" type="button" role="tab" data-tab="all" aria-selected="true">All areas</button>
+    <button class="cc-tab cat-cloud" type="button" role="tab" data-tab="cloud" aria-selected="false"><span class="cc-sw"></span>Cloud · Intune</button>
+    <button class="cc-tab cat-etchworks" type="button" role="tab" data-tab="etchworks" aria-selected="false"><span class="cc-sw"></span>Etchworks</button>
+    <button class="cc-tab cat-vids" type="button" role="tab" data-tab="vids" aria-selected="false"><span class="cc-sw"></span>VidsAutomate</button>
+    <button class="cc-tab cat-ops" type="button" role="tab" data-tab="ops" aria-selected="false"><span class="cc-sw"></span>Home &amp; operations</button>
+    <button class="cc-tab cat-finance" type="button" role="tab" data-tab="finance" aria-selected="false"><span class="cc-sw"></span>Finance</button>
+  </nav>
+
+  <div class="cc-grid">
+    <!-- Left column -->
+    <div class="cc-col">
+      <section class="cc-sec" data-cats="all cloud etchworks vids" id="projects">
+        <h2 class="cc-h2">Active projects</h2>
+        <p class="cc-sec-note">Status, progress and next step for each workstream.</p>
+
+        <article class="cc-card cat-cloud" data-cats="all cloud">
+          <div class="cc-card-head">
+            <h3 class="cc-card-title"><span class="cc-sw"></span>Cloud engineering <span class="cc-card-tag">Microsoft Intune</span></h3>
+            <span class="cc-card-stat"><b data-draw="kpi" data-fmt="pct" data-source="cat_summary" data-field="avg_progress" data-where="category=cloud">—</b> avg · <b data-draw="kpi" data-fmt="int" data-source="cat_summary" data-field="flagged" data-where="category=cloud">—</b> flagged</span>
+          </div>
+          <div class="cc-card-body"><ul class="cc-list" data-draw="projects" data-cat="cloud" data-source="projects"></ul></div>
+        </article>
+
+        <article class="cc-card cat-etchworks" data-cats="all etchworks">
+          <div class="cc-card-head">
+            <h3 class="cc-card-title"><span class="cc-sw"></span>ETCHWORKS <span class="cc-card-tag">Laser engraving &amp; fabrication</span></h3>
+            <span class="cc-card-stat"><b data-draw="kpi" data-fmt="pct" data-source="cat_summary" data-field="avg_progress" data-where="category=etchworks">—</b> avg · <b data-draw="kpi" data-fmt="int" data-source="cat_summary" data-field="flagged" data-where="category=etchworks">—</b> flagged</span>
+          </div>
+          <div class="cc-card-body"><ul class="cc-list" data-draw="projects" data-cat="etchworks" data-source="projects"></ul></div>
+        </article>
+
+        <article class="cc-card cat-vids" data-cats="all vids">
+          <div class="cc-card-head">
+            <h3 class="cc-card-title"><span class="cc-sw"></span>VidsAutomate <span class="cc-card-tag">Video generation workflow</span></h3>
+            <span class="cc-card-stat"><b data-draw="kpi" data-fmt="pct" data-source="cat_summary" data-field="avg_progress" data-where="category=vids">—</b> avg · <b data-draw="kpi" data-fmt="int" data-source="cat_summary" data-field="flagged" data-where="category=vids">—</b> flagged</span>
+          </div>
+          <div class="cc-card-body"><ul class="cc-list" data-draw="projects" data-cat="vids" data-source="projects"></ul></div>
+        </article>
+      </section>
+
+      <section class="cc-sec" data-cats="all ops" id="operations">
+        <h2 class="cc-h2">Physical infrastructure &amp; operations</h2>
+        <p class="cc-sec-note">Home renovation, the print farm and the Brookfield property transfer.</p>
+
+        <article class="cc-card cat-ops">
+          <div class="cc-card-head">
+            <h3 class="cc-card-title"><span class="cc-sw"></span>Bathroom renovation <span class="cc-card-tag">Task board</span></h3>
+            <span class="cc-card-stat"><b data-draw="kpi" data-fmt="int" data-source="reno_summary" data-field="done" data-row="0">—</b> of <b data-draw="kpi" data-fmt="int" data-source="reno_summary" data-field="total" data-row="0">—</b> done · <b data-draw="kpi" data-fmt="usd0" data-source="reno_summary" data-field="remaining_cost" data-row="0">—</b> to go</span>
+          </div>
+          <div class="cc-card-body">
+            <div class="kb">
+              <div class="kb-col"><p class="kb-col-h">To do</p><ul class="cc-list" data-draw="reno" data-col="todo" data-source="reno_tasks"></ul></div>
+              <div class="kb-col"><p class="kb-col-h">In progress</p><ul class="cc-list" data-draw="reno" data-col="doing" data-source="reno_tasks"></ul></div>
+              <div class="kb-col"><p class="kb-col-h">Done</p><ul class="cc-list" data-draw="reno" data-col="done" data-source="reno_tasks"></ul></div>
+            </div>
+          </div>
+        </article>
+
+        <div class="cc-pair">
+          <article class="cc-card cat-ops">
+            <div class="cc-card-head">
+              <h3 class="cc-card-title"><span class="cc-sw"></span>3D printer fleet</h3>
+              <span class="cc-card-stat">Spool alert under 200 g</span>
+            </div>
+            <div class="cc-card-body"><ul class="cc-list" data-draw="printers" data-source="printers"></ul></div>
+          </article>
+
+          <article class="cc-card cat-ops">
+            <div class="cc-card-head">
+              <h3 class="cc-card-title"><span class="cc-sw"></span>Brookfield property transfer</h3>
+              <span class="cc-card-stat">Milestones</span>
+            </div>
+            <div class="cc-card-body"><ol class="tl" data-draw="brookfield" data-source="brookfield"></ol></div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <!-- Right column -->
+    <div class="cc-col">
+      <article class="cc-card" data-cats="all cloud etchworks vids ops" id="feed">
+        <div class="cc-card-head">
+          <h3 class="cc-card-title"><span class="cc-live" aria-hidden="true"></span>Automation feed <span class="cc-card-tag">n8n executions</span></h3>
+          <button class="feed-btn" type="button" id="feed-refresh">Refresh</button>
+        </div>
+        <div class="cc-card-body">
+          <div class="feed-stats">
+            <span><b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="total_runs" data-row="0">—</b> runs</span>
+            <span class="s-bad"><b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="failed_runs" data-row="0">—</b> failed</span>
+            <span class="s-warn"><b data-draw="kpi" data-fmt="int" data-source="kpis" data-field="warning_runs" data-row="0">—</b> warnings</span>
+          </div>
+          <ul class="feed" data-draw="feed" data-source="n8n_log"></ul>
+        </div>
+      </article>
+
+      <article class="cc-card cat-finance" data-cats="all finance cloud etchworks vids ops" id="finance">
+        <div class="cc-card-head">
+          <h3 class="cc-card-title"><span class="cc-sw"></span>Financial summary</h3>
+          <span class="cc-card-stat">November</span>
+        </div>
+        <div class="cc-card-body">
+          <p class="cc-sub">Buy now, pay later installments, soonest first</p>
+          <ul class="cc-list" data-draw="bnpl" data-source="bnpl"></ul>
+          <div class="cc-divider"></div>
+          <p class="cc-sub">Budget allocation · spent vs allocated</p>
+          <ul class="cc-list" data-draw="budget" data-source="budget"></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Shared helpers (one script scope each, so they live on window).
+  const usd = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
+  const usd0 = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', maximumFractionDigits: 0});
+  const DAY = 86400000;
+  window.cc = {
+    usd, usd0,
+    pct: d3.format('.0%'),
+    int: d3.format(','),
+    day: (d) => d3.utcFormat('%b %-d')(new Date(d)),
+    daysUntil: (d) => Math.round((new Date(d + 'T12:00:00Z') - Date.now()) / DAY),
+    rel(days) {
+      if (days === 0) return 'today';
+      if (days === 1) return 'tomorrow';
+      if (days === -1) return 'yesterday';
+      return days > 0 ? `in ${days} days` : `${-days} days ago`;
+    },
+    ago(ts) {
+      const s = Math.max(0, Math.round((Date.now() - new Date(ts)) / 1000));
+      if (s < 60) return 'just now';
+      if (s < 3600) return `${Math.floor(s / 60)} min ago`;
+      if (s < 86400) return `${Math.floor(s / 3600)} h ago`;
+      return `${Math.floor(s / 86400)} d ago`;
+    },
+    el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    },
+    bar(frac, extra) {
+      const b = window.cc.el('div', 'bar' + (extra ? ' ' + extra : ''));
+      const i = document.createElement('i');
+      i.style.width = Math.max(0, Math.min(1, frac)) * 100 + '%';
+      b.append(i);
+      return b;
+    },
+    // Returns rows when ready; otherwise leaves the list in its loading / failed state.
+    ready(el, id) {
+      const d = dash.data(id);
+      el.replaceChildren();
+      if (d.status === 'ok') { el.classList.remove('dash-skeleton'); return d.data; }
+      if (d.status === 'error') { el.classList.remove('dash-skeleton'); el.append(window.cc.el('li', 'cc-fail', 'Failed to load')); return null; }
+      el.classList.add('dash-skeleton');
+      return null;
+    },
+    tab: 'all',
+    catLabel: {cloud: 'Cloud', etchworks: 'Etchworks', vids: 'VidsAutomate', ops: 'Operations', finance: 'Finance'},
+    status: {
+      on_track: ['On track', 's-ok'], live: ['Live', 's-ok'], at_risk: ['At risk', 's-warn'],
+      blocked: ['Blocked', 's-bad'], planned: ['Planned', 's-muted'],
+      printing: ['Printing', 's-info'], idle: ['Idle', 's-muted'], maintenance: ['Maintenance', 's-warn'], offline: ['Offline', 's-bad'],
+      success: ['Success', 's-ok'], error: ['Failed', 's-bad'], warning: ['Warning', 's-warn'], running: ['Running', 's-info'],
+    },
+  };
+</script>
+
+<script>
+  // Computed figures.
+  const n = (x) => Number(x) || 0;
+  dash.calc('kpis', {
+    inputs: ['projects', 'n8n_log', 'bnpl', 'budget'],
+    title: 'Headline figures',
+    description: 'Project counts and progress, n8n run outcomes, BNPL balances and November budget use.',
+    fn: (projects, n8n_log, bnpl, budget) => {
+      const active = projects.filter((p) => p.status !== 'planned');
+      const open = bnpl.filter((b) => n(b.payments_left) > 0).sort((a, b) => (a.next_due < b.next_due ? -1 : 1));
+      const alloc = budget.reduce((s, b) => s + n(b.allocated), 0);
+      const spent = budget.reduce((s, b) => s + n(b.spent), 0);
+      const failed = n8n_log.filter((l) => l.level === 'error').length;
+      return [{
+        active_projects: active.length,
+        avg_progress: active.reduce((s, p) => s + n(p.progress), 0) / (active.length || 1) / 100,
+        flagged: projects.filter((p) => p.status === 'at_risk' || p.status === 'blocked').length,
+        total_runs: n8n_log.length,
+        failed_runs: failed,
+        warning_runs: n8n_log.filter((l) => l.level === 'warning').length,
+        success_rate: n8n_log.length ? (n8n_log.length - failed) / n8n_log.length : 0,
+        bnpl_remaining: bnpl.reduce((s, b) => s + n(b.total) - n(b.paid), 0),
+        bnpl_cycle: open.reduce((s, b) => s + n(b.installment), 0),
+        next_due_amount: open.length ? n(open[0].installment) : 0,
+        next_due_item: open.length ? open[0].item : '',
+        next_due_date: open.length ? open[0].next_due : '',
+        budget_used: alloc ? spent / alloc : 0,
+        over_budget: budget.filter((b) => n(b.spent) > n(b.allocated)).length,
+      }];
+    },
+  });
+
+  dash.calc('cat_summary', {
+    inputs: ['projects'],
+    title: 'Progress by area',
+    description: 'Average progress (excluding planned work) and at-risk or blocked count per project area.',
+    fn: (projects) => ['cloud', 'etchworks', 'vids'].map((category) => {
+      const rows = projects.filter((p) => p.category === category);
+      const active = rows.filter((p) => p.status !== 'planned');
+      return {
+        category,
+        avg_progress: active.reduce((s, p) => s + n(p.progress), 0) / (active.length || 1) / 100,
+        flagged: rows.filter((p) => p.status === 'at_risk' || p.status === 'blocked').length,
+      };
+    }),
+  });
+
+  dash.calc('reno_summary', {
+    inputs: ['reno_tasks'],
+    title: 'Renovation progress',
+    description: 'Tasks done out of total, and estimated cost of tasks not yet done.',
+    fn: (reno_tasks) => [{
+      total: reno_tasks.length,
+      done: reno_tasks.filter((t) => t.status === 'done').length,
+      remaining_cost: reno_tasks.filter((t) => t.status !== 'done').reduce((s, t) => s + n(t.cost), 0),
+    }],
+  });
+</script>
+
+<script>
+  // Filter tabs: show or hide sections, then redraw the lists that filter inside.
+  const applyTab = (t) => {
+    window.cc.tab = t;
+    document.querySelectorAll('.cc-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+    document.querySelectorAll('[data-cats]').forEach((el) => { el.hidden = !el.dataset.cats.split(' ').includes(t); });
+    dash.draw('feed'); dash.draw('bnpl'); dash.draw('budget');
+  };
+  document.querySelectorAll('.cc-tab').forEach((b) => b.addEventListener('click', () => { applyTab(b.dataset.tab); dash.setLink(b.dataset.tab === 'all' ? 'top' : b.dataset.tab); }));
+  document.querySelectorAll('#feed-refresh').forEach((b) => b.addEventListener('click', () => dash.refresh('n8n_log')));
+  const start = location.hash.slice(1);
+  if (['cloud', 'etchworks', 'vids', 'ops', 'finance'].includes(start)) applyTab(start);
+</script>
+
+<script>
+  const cc = window.cc;
+
+  dash.draw('clock', {
+    mount(el) {
+      const tick = () => { el.textContent = new Date().toLocaleString('en-US', {weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit'}); };
+      tick();
+      return setInterval(tick, 1000);
+    },
+    update() {},
+    unmount(el, t) { clearInterval(t); },
+  });
+
+  dash.draw('kpi', (el) => {
+    const d = dash.data(el.dataset.source);
+    if (d.status !== 'ok' || !d.data.length) { el.textContent = '—'; return; }
+    let row = d.data[0];
+    if (el.dataset.where) {
+      const [k, v] = el.dataset.where.split('=');
+      row = d.data.find((r) => String(r[k]) === v);
+      if (!row) { el.textContent = '—'; return; }
+    }
+    const v = row[el.dataset.field];
+    const f = el.dataset.fmt;
+    el.textContent = v === '' || v == null ? '—'
+      : f === 'pct' ? cc.pct(v) : f === 'usd' ? cc.usd.format(v) : f === 'usd0' ? cc.usd0.format(v)
+      : f === 'date' ? cc.day(v) : f === 'int' ? cc.int(v) : String(v);
+  });
+
+  dash.draw('projects', (el) => {
+    const rows = cc.ready(el, 'projects');
+    if (!rows) return;
+    rows.filter((r) => r.category === el.dataset.cat).forEach((r) => {
+      const [label, cls] = cc.status[r.status] || [r.status, 's-muted'];
+      const li = cc.el('li', 'pj');
+      const top = cc.el('div', 'pj-top');
+      top.append(cc.el('span', 'pj-name', r.name), cc.el('span', 'pill ' + cls, label));
+      const meta = cc.el('div', 'pj-meta');
+      const pct = cc.el('span'); pct.append(cc.el('strong', null, `${r.progress}%`));
+      const days = cc.daysUntil(r.due);
+      meta.append(pct, cc.el('span', null, `Next: ${r.next_step}`), cc.el('span', days < 0 ? 's-bad' : null, `Due ${cc.day(r.due)} (${cc.rel(days)})`));
+      li.append(top, cc.bar(Number(r.progress) / 100, r.status === 'blocked' ? 'bar--over' : ''), meta);
+      el.append(li);
+    });
+  });
+
+  dash.draw('reno', (el) => {
+    const rows = cc.ready(el, 'reno_tasks');
+    if (!rows) return;
+    rows.filter((r) => r.status === el.dataset.col).forEach((r) => {
+      const days = cc.daysUntil(r.due);
+      const late = r.status !== 'done' && days < 0;
+      const li = cc.el('li', 'kb-card' + (r.status === 'done' ? ' kb-card--done' : '') + (late ? ' kb-card--late' : ''));
+      li.append(cc.el('b', null, r.task));
+      li.append(cc.el('span', null, `${r.area} · ${cc.day(r.due)}${Number(r.cost) ? ' · ' + cc.usd0.format(r.cost) : ''}`));
+      if (r.status !== 'done') li.append(cc.el('span', late ? 's-bad' : null, cc.rel(days)));
+      el.append(li);
+    });
+  });
+
+  dash.draw('printers', (el) => {
+    const rows = cc.ready(el, 'printers');
+    if (!rows) return;
+    rows.forEach((r) => {
+      const [label, cls] = cc.status[r.status] || [r.status, 's-muted'];
+      const li = cc.el('li', 'pr');
+      const name = cc.el('div');
+      name.append(cc.el('div', 'pr-name', r.printer), cc.el('div', 'pr-model', r.model));
+      li.append(name, cc.el('span', 'pill ' + cls, label));
+      if (r.status === 'printing') {
+        const job = cc.el('div', 'pr-line');
+        job.append(cc.el('span', null, `${r.job} · ${r.job_progress}%`));
+        li.append(job, Object.assign(cc.bar(Number(r.job_progress) / 100), {style: 'grid-column: 1 / -1'}));
+      } else if (r.job) {
+        li.append(cc.el('div', 'pr-line', r.job));
+      }
+      const frac = Number(r.spool_g_left) / Number(r.spool_g_total);
+      const low = Number(r.spool_g_left) < 200;
+      const sp = cc.el('div', 'pr-spool');
+      sp.append(cc.el('span', null, r.filament), cc.bar(frac, low ? 'bar--low' : ''), cc.el('span', low ? 's-warn' : null, `${cc.int(r.spool_g_left)} g`));
+      li.append(sp, cc.el('div', 'pr-line', `${cc.int(r.nozzle_hours)} nozzle hours`));
+      el.append(li);
+    });
+  });
+
+  dash.draw('brookfield', (el) => {
+    const rows = cc.ready(el, 'brookfield');
+    if (!rows) return;
+    rows.forEach((r) => {
+      const li = cc.el('li', 'tl-i tl-i--' + r.status);
+      li.style.setProperty('--c', r.status === 'blocked' ? 'var(--color-bad)' : 'var(--cat-ops)');
+      const body = cc.el('div');
+      body.append(cc.el('span', 'tl-name', r.milestone), cc.el('span', 'tl-owner', r.owner));
+      const when = cc.el('div', 'tl-when');
+      when.append(cc.el('strong', null, cc.day(r.due)), document.createTextNode(r.status === 'done' ? 'Done' : r.status === 'active' ? 'In progress · ' + cc.rel(cc.daysUntil(r.due)) : cc.rel(cc.daysUntil(r.due))));
+      li.append(cc.el('span', 'tl-dot'), body, when);
+      el.append(li);
+    });
+  });
+
+  dash.draw('feed', {
+    mount(el) { return setInterval(() => dash.draw('feed'), 30000); },
+    update(el) {
+      const rows = cc.ready(el, 'n8n_log');
+      if (!rows) return;
+      const t = cc.tab;
+      const shown = rows.filter((r) => t === 'all' || t === 'finance' || r.category === t)
+        .sort((a, b) => (a.ts < b.ts ? 1 : -1));
+      if (!shown.length) { el.append(cc.el('li', 'cc-fail', 'No runs for this area')); return; }
+      shown.forEach((r) => {
+        const [label, cls] = cc.status[r.level] || [r.level, 's-muted'];
+        const li = cc.el('li', 'fd');
+        const time = cc.el('div', 'fd-time', new Date(r.ts).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'}));
+        time.append(cc.el('em', null, cc.ago(r.ts)));
+        const main = cc.el('div', 'fd-main');
+        const top = cc.el('div', 'fd-top');
+        const lvl = cc.el('span', 'fd-lvl ' + cls); lvl.setAttribute('title', label); lvl.setAttribute('aria-label', label);
+        const chip = cc.el('span', 'chip cat-' + r.category, cc.catLabel[r.category] || r.category);
+        top.append(lvl, cc.el('span', 'fd-wf', r.workflow), chip);
+        main.append(top, cc.el('span', 'fd-msg', `${r.message} · ${(Number(r.duration_ms) / 1000).toFixed(1)} s`));
+        li.append(time, main);
+        el.append(li);
+      });
+    },
+    unmount(el, t) { clearInterval(t); },
+  });
+
+  const finFilter = (rows) => {
+    const t = cc.tab;
+    return rows.filter((r) => t === 'all' || t === 'finance' || r.category === t);
+  };
+
+  dash.draw('bnpl', (el) => {
+    const rows = cc.ready(el, 'bnpl');
+    if (!rows) return;
+    const shown = finFilter(rows).sort((a, b) => (a.next_due < b.next_due ? -1 : 1));
+    if (!shown.length) { el.append(cc.el('li', 'cc-fail', 'No installment plans in this area')); return; }
+    shown.forEach((r) => {
+      const days = cc.daysUntil(r.next_due);
+      const li = cc.el('li', 'bn cat-' + r.category);
+      const top = cc.el('div', 'bn-top');
+      const item = cc.el('span', 'bn-item', r.item);
+      top.append(item, cc.el('span', 'bn-due' + (days <= 7 ? ' bn-due--soon' : ''), `${cc.usd.format(r.installment)} · ${cc.day(r.next_due)} (${cc.rel(days)})`));
+      const meta = cc.el('div', 'bn-meta');
+      meta.append(cc.el('span', 'chip cat-' + r.category, r.provider),
+        cc.el('span', null, `${cc.usd0.format(r.paid)} of ${cc.usd0.format(r.total)} paid`),
+        cc.el('span', null, `${r.payments_left} left`));
+      li.append(top, cc.bar(Number(r.paid) / Number(r.total)), meta);
+      el.append(li);
+    });
+  });
+
+  dash.draw('budget', (el) => {
+    const rows = cc.ready(el, 'budget');
+    if (!rows) return;
+    const shown = finFilter(rows);
+    if (!shown.length) { el.append(cc.el('li', 'cc-fail', 'No budget lines in this area')); return; }
+    shown.forEach((r) => {
+      const over = Number(r.spent) > Number(r.allocated);
+      const li = cc.el('li', 'bg cat-' + r.category);
+      const name = cc.el('span', 'bg-name'); name.append(cc.el('span', 'cc-sw'), document.createTextNode(r.bucket));
+      li.append(name, cc.el('span', 'bg-val' + (over ? ' bg-val--over' : ''), `${cc.usd0.format(r.spent)} / ${cc.usd0.format(r.allocated)}`), cc.bar(Number(r.spent) / Number(r.allocated), over ? 'bar--over' : ''));
+      el.append(li);
+    });
+  });
+</script>

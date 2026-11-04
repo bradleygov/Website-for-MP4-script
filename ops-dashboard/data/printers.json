@@ -1,0 +1,6 @@
+[
+ {"printer":"P1S-01","model":"Bambu Lab P1S","status":"printing","job":"Coaster jig v3","job_progress":64,"filament":"PLA Black","spool_g_left":420,"spool_g_total":1000,"nozzle_hours":312},
+ {"printer":"K1-01","model":"Creality K1 Max","status":"maintenance","job":"Nozzle swap","job_progress":0,"filament":"PLA White","spool_g_left":150,"spool_g_total":1000,"nozzle_hours":2045},
+ {"printer":"Ender-01","model":"Creality Ender 3 V3","status":"idle","job":"","job_progress":0,"filament":"PETG Clear","spool_g_left":780,"spool_g_total":1000,"nozzle_hours":1120},
+ {"printer":"Mini-01","model":"Prusa MINI+","status":"printing","job":"Laser bed honeycomb clips","job_progress":22,"filament":"PETG Black","spool_g_left":610,"spool_g_total":1000,"nozzle_hours":860}
+]

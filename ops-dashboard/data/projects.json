@@ -1,0 +1,11 @@
+[
+ {"id":"intune-autopilot","category":"cloud","name":"Autopilot v2 rollout (Intune)","status":"on_track","progress":72,"next_step":"Pilot ring 2 — 45 devices","due":"2026-11-14"},
+ {"id":"intune-compliance","category":"cloud","name":"CIS compliance baseline","status":"at_risk","progress":48,"next_step":"Fix BitLocker key escrow failures","due":"2026-11-10"},
+ {"id":"intune-win32","category":"cloud","name":"Win32 app packaging pipeline (Graph + PowerShell)","status":"on_track","progress":85,"next_step":"Add detection-rule unit tests","due":"2026-11-20"},
+ {"id":"etch-intake","category":"etchworks","name":"Order intake: form → n8n → Airtable","status":"live","progress":90,"next_step":"Auto-generate invoice PDF","due":"2026-11-08"},
+ {"id":"etch-materials","category":"etchworks","name":"Material settings codebase","status":"on_track","progress":60,"next_step":"Dial in leather on xTool F2","due":"2026-11-18"},
+ {"id":"etch-holiday","category":"etchworks","name":"Holiday batch: 40 slate coasters","status":"at_risk","progress":35,"next_step":"Reorder slate blanks (12 short)","due":"2026-11-22"},
+ {"id":"vids-combine","category":"vids","name":"MP4 combine script + web UI","status":"on_track","progress":80,"next_step":"Batch mode for folders","due":"2026-11-12"},
+ {"id":"vids-render","category":"vids","name":"Shorts render queue (ffmpeg + n8n)","status":"blocked","progress":25,"next_step":"Fix audio drift on concat","due":"2026-11-15"},
+ {"id":"vids-thumbs","category":"vids","name":"Thumbnail generator","status":"planned","progress":10,"next_step":"Pick template style","due":"2026-12-01"}
+]

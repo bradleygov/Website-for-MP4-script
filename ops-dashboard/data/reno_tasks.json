@@ -1,0 +1,12 @@
+[
+ {"task":"Demo old tile and vanity","status":"done","area":"Demo","due":"2026-10-12","cost":0},
+ {"task":"Rough plumbing inspection","status":"done","area":"Plumbing","due":"2026-10-20","cost":150},
+ {"task":"Cement board install","status":"done","area":"Shower","due":"2026-10-27","cost":210},
+ {"task":"Waterproof shower (2 coats)","status":"doing","area":"Shower","due":"2026-11-06","cost":95},
+ {"task":"GFCI outlet + exhaust fan","status":"doing","area":"Electrical","due":"2026-11-08","cost":240},
+ {"task":"Tile shower walls","status":"todo","area":"Shower","due":"2026-11-14","cost":620},
+ {"task":"Grout and seal","status":"todo","area":"Shower","due":"2026-11-17","cost":60},
+ {"task":"Install vanity and faucet","status":"todo","area":"Plumbing","due":"2026-11-19","cost":0},
+ {"task":"Paint and trim","status":"todo","area":"Finish","due":"2026-11-23","cost":110},
+ {"task":"Final walkthrough","status":"todo","area":"Finish","due":"2026-11-26","cost":0}
+]
